@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sticky</title>
+  <script src="/tab.js"></script>
+  <script src="/tabs.js"></script>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- <pre>
+    &ltsection&gt
+      &ltmain&gt
+        &ltdiv&gt
+          sticky
+        &lt/div&gt
+      &lt/main&gt
+    &lt/section&gt
+
+    section: 200vh body产生了滚动条
+    main: 400vh section产生了滚动条
+    这个时候只有发生在 section的滚动会触发sticky的粘性效果
+    发生在body内的滚动 则不会触发粘性效果
+
+    tips: overflow: hidden(也可以算作是一种另类的滚动区域)
+          这也就是sticky的父级元素如果设置了overflow: hidden，粘性会失效的原因
+  </pre> -->
+
+  <script>
+    const hash = parseInt(window.location.hash.slice(1));
+
+    const activedIndex = isNaN(hash)
+      ? 0
+      : hash > 2 || hash < 0
+      ? 0
+      : hash;
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabs = new Tabs(
+        {
+          activedIndex,
+        },
+        new Tab({
+          text: 'position: sticky 中fixed的效果不能超过其包含块(最近的父级元素)',
+          template: `
+            <div>
+              <p>浅蓝色是sticky元素</p>
+              <p>深蓝色是sticky元素的包含块</p>
+              <p>渐变色用来撑开滚动条</p>
+              <p>会发现当深蓝色滚出屏幕外时, 浅蓝色就不黏在top:0的位置了</p>
+              <section class="wrap">
+                <div class="core-wrap">
+                  <div class="core"></div>
+                </div>
+              </section>
+            </div>
+          `,
+          style: `
+            .wrap {
+              height: 200vh;
+
+              background-image: linear-gradient(red, blue);
+            }
+
+            .wrap .core-wrap {
+              width: 200px;
+              height: 200px;
+
+              background-color: cadetblue;
+
+              margin-top: 200px;
+            }
+
+            .wrap .core {
+              position: sticky;
+              top: 0;
+
+              width: 100px;
+              height: 100px;
+
+              background-color: aqua;
+            }
+          `
+        }),
+
+        new Tab({
+          text: 'position: sticky 作用于最近的滚动区域',
+          template: `
+            <div>
+              <p>浅蓝色是sticky元素</p>
+              <p>渐变色(yellow to green)用来撑开渐变色(blue to red)的滚动条</p>
+              <p>渐变色(blue to red)用来撑开文档的滚动条</p>
+              <p>会发现stick元素在<strong>渐变色(blue to red)内生效</strong>在文档滚动的时候不生效</p>
+              <section class="wrap_1">
+                <div class="core-wrap">
+                  <div class="placeholder"></div>
+                  <div class="core"></div>
+                </div>
+              </section>
+            </div>
+          `,
+          style: `
+            .wrap_1 {
+              height: 200vh;
+
+              background-image: linear-gradient(red, blue);
+
+              overflow-y: scroll;
+            }
+
+            .wrap_1 .core-wrap {
+              width: 200px;
+              height: 400vh;
+
+              background-image: linear-gradient(yellow, green);
+            }
+
+            .wrap_1 .placeholder {
+              width: 200px;
+              height: 400px;
+              background: black;
+            }
+
+            .wrap_1 .core {
+              position: sticky;
+              top: 100px;
+
+              width: 100px;
+              height: 100px;
+
+              background-color: aqua;
+            }
+          `
+        }),
+
+        new Tab({
+          text: 'overflow: hidden会让position: sticky失效',
+          template: `
+            <div>
+              <p>浅蓝色是sticky元素</p>
+              <p>渐变色(yellow to green)用来撑开渐变色(blue to red)的滚动条</p>
+              <p>渐变色(blue to red)用来撑开文档的滚动条, 且其设置有overflow: hidden;</p>
+              <p>会发现stick元素失效了</p>
+              <section class="wrap_2">
+                <div class="core-wrap">
+                  <div class="core"></div>
+                </div>
+              </section>
+            </div>
+          `,
+          style: `
+            .wrap_2 {
+              height: 200vh;
+
+              background-image: linear-gradient(red, blue);
+
+              overflow: hidden;
+            }
+
+            .wrap_2 .core-wrap {
+              width: 200px;
+              height: 400vh;
+
+              background-image: linear-gradient(yellow, green);
+            }
+
+            .wrap_2 .core {
+              top: 0;
+
+              width: 100px;
+              height: 100px;
+
+              background-color: aqua;
+            }
+          `
+        })
+      );
+    });
+  </script>
+</body>
+</html>
